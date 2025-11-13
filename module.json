@@ -1,0 +1,20 @@
+{
+  "id": "raven-blessing",
+  "title": "Benção dos Corvos",
+  "description": "Sistema de acúmulos visuais da Benção dos Corvos para Foundry VTT.",
+  "authors": [
+    {
+    "name": "Bruna Russo"
+    }
+  ],
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "12",
+    "verified": "13"
+  },
+  "url": "https://github.com/BrunaRusso/raven-blessing",
+  "manifest": "https://github.com/BrunaRusso/raven-blessing/releases/latest/download/module.json",
+  "scripts": [
+    "scripts/blessing.js"
+  ]
+}
