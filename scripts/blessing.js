@@ -1,9 +1,13 @@
-const players = ["AbdmFYnE1ZfikJn4", "NT173HaeDSgPtWow", "8uujKB3FMYN9eoQ5"];
+var players = [];
 const SCOPE = 'bencao-dos-corvos';
 const KEY = 'acumulados';
 
 Hooks.once('initializeCanvasEnvironment', async () => {
     console.log("🐦‍⬛ Benção dos Corvos | Módulo inicializado");
+
+    players = game.actors.filter(actor => actor.type === "character").map(x => x._id);
+
+    console.log(players);
 });
 
 async function updateFlag(actor, value = 0) {
