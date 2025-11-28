@@ -3,11 +3,9 @@ const SCOPE = 'bencao-dos-corvos';
 const KEY = 'acumulados';
 
 Hooks.once('initializeCanvasEnvironment', async () => {
-    console.log("🐦‍⬛ Benção dos Corvos | Módulo inicializado");
+    console.log("🪶 Benção dos Corvos | Módulo inicializado");
 
     players = game.actors.filter(actor => actor.type === "character").map(x => x._id);
-
-    console.log(players);
 });
 
 async function updateFlag(actor, value = 0) {
@@ -40,6 +38,13 @@ if (!window.__bencao_hook_registered_v13) {
             destroyLabel(token);
     });
 
+    Hooks.on("destroyToken", (token) => {
+        // 'token' aqui é a instância do Token no Canvas que está sendo destruída
+        if (token?.labelBlessing) {
+            destroyLabel(token);
+        }
+    });
+
     Hooks.on("createToken", async (tokenDocument, options, userId) => {
         const actor = await game.actors.get(tokenDocument.actorId);
         const token = await canvas.tokens.get(tokenDocument._id);
@@ -47,6 +52,23 @@ if (!window.__bencao_hook_registered_v13) {
         if (actor.flags?.[SCOPE]) {
             if (actor.flags?.[SCOPE]?.[KEY] > 0)
                 createOrUpdateLabel(token, actor.flags?.[SCOPE]?.[KEY]);
+        }
+    });
+
+    Hooks.on("updateActor", (actor, changes, options, userId) => {
+        const flagPath = `flags.${SCOPE}.${KEY}`;
+        if (foundry.utils.hasProperty(changes, flagPath)) {
+            const newValue = foundry.utils.getProperty(changes, flagPath);
+
+            const token = actor.getActiveTokens().at(0);
+
+            if (token) {
+                if (newValue > 0) {
+                    createOrUpdateLabel(token, newValue);
+                } else {
+                    destroyLabel(token);
+                }
+            }
         }
     });
 }
@@ -160,7 +182,6 @@ async function removeBlessing() {
 
     if (actor.flags?.[SCOPE]) {
         var value = actor.flags?.[SCOPE]?.[KEY];
-        console.log(value);
 
         if (value <= 0) {
             await updateFlag(actor, 0);
@@ -242,7 +263,7 @@ function createOrUpdateLabel(token, value) {
     }
     // Se já existe, só atualiza
     if (token.labelBlessing && !token.labelBlessing.destroyed) {
-        token.labelBlessing.text = `🐦‍⬛ ${value}`;
+        token.labelBlessing.text = `🪶 ${value}`;
         token.labelBlessing.visible = true;
         updateLabelPosition(token);
         return token.labelBlessing;
@@ -264,7 +285,7 @@ function createOrUpdateLabel(token, value) {
         dropShadowDistance: 1,
     });
 
-    const text = new PIXI.Text(`🐦‍⬛ ${value}`, style);
+    const text = new PIXI.Text(`🪶 ${value}`, style);
     text.anchor.set(0.5, 1);
     updateLabelPosition(token, text);
     text.zIndex = 5000;
